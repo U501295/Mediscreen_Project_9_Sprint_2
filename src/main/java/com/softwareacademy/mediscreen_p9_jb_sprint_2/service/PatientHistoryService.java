@@ -33,13 +33,13 @@ public class PatientHistoryService {
         return patientHistory.get();
     }
 
-    public PatientHistory getPatientsHistoryById(Long id) throws DoesNotExistsException {
+    /*public PatientHistory getPatientsHistoryById(Long id) throws DoesNotExistsException {
         Optional<PatientHistory> patientHistory = patientsHistoryRepository.findByPatientId(id);
         if (! patientHistory.isPresent()) {
             throw new DoesNotExistsException("Patient with id of " + id + "does not exists");
         }
         return patientHistory.get();
-    }
+    }*/
 
     public List<PatientHistory> getAllPatientsHistories() {
         List<PatientHistory> getAll = patientsHistoryRepository.findAll();
