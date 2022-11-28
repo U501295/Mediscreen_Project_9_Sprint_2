@@ -2,13 +2,14 @@ package com.softwareacademy.mediscreen_p9_jb_sprint_2.service;
 
 import com.softwareacademy.mediscreen_p9_jb_sprint_2.exceptions.AlreadyExistsException;
 import com.softwareacademy.mediscreen_p9_jb_sprint_2.exceptions.DoesNotExistsException;
-import com.softwareacademy.mediscreen_p9_jb_sprint_2.model.Notes;
+import com.softwareacademy.mediscreen_p9_jb_sprint_2.model.Note;
 import com.softwareacademy.mediscreen_p9_jb_sprint_2.model.PatientHistory;
 import com.softwareacademy.mediscreen_p9_jb_sprint_2.repository.PatientHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,11 +19,15 @@ public class PatientHistoryService {
     @Autowired
     PatientHistoryRepository patientsHistoryRepository;
 
-    public PatientHistory createPatientsHistory(PatientHistory patientsHistory) throws AlreadyExistsException {
-        if (patientsHistoryRepository.findByFirstNameAndLastName(patientsHistory.getFirstName(), patientsHistory.getLastName()).isPresent()) {
-            throw new AlreadyExistsException(patientsHistory.getFirstName() + " " + patientsHistory.getLastName() + "already Exists");
+    public PatientHistory createPatientsHistory(PatientHistory patientHistory) throws AlreadyExistsException {
+        if (patientsHistoryRepository.findByFirstNameAndLastName(patientHistory.getFirstName(), patientHistory.getLastName()).isPresent()) {
+            throw new AlreadyExistsException(patientHistory.getFirstName() + " " + patientHistory.getLastName() + " " + "already Exists");
         }
-        return patientsHistoryRepository.insert(patientsHistory);
+        Note noteToBeAdded = new Note(patientHistory.getNotes().get(0).getContent());
+        List<Note> listOfNotesToBeAdded = new ArrayList<>();
+        listOfNotesToBeAdded.add(noteToBeAdded);
+        PatientHistory historyToBeAdded = new PatientHistory(patientHistory.getPatientId(), patientHistory.getFirstName(), patientHistory.getLastName(), listOfNotesToBeAdded);
+        return patientsHistoryRepository.insert(historyToBeAdded);
     }
 
     public PatientHistory getPatientsHistory(String firstName, String lastName) throws DoesNotExistsException {
@@ -46,21 +51,22 @@ public class PatientHistoryService {
         return getAll;
     }
 
-    public Notes getNotesByCreationDate(String firstName, String lastName, LocalDate creationDate) throws Exception {
+    public Note getNotesByCreationDate(String firstName, String lastName, LocalDate creationDate) throws Exception {
         Optional<PatientHistory> patientsHistory = patientsHistoryRepository.findByFirstNameAndLastName(firstName, lastName);
-        for (Notes notes : patientsHistory.get().getNotes()) {
-            if (notes.getCreationDate().equals(creationDate)) {
-                return notes;
+        for (Note note : patientsHistory.get().getNotes()) {
+            if (note.getCreationDate().equals(creationDate)) {
+                return note;
             }
         }
         return null;
     }
 
-    public PatientHistory updateOrCreateNote(String firstName, String lastName, Notes noteUpdated) throws Exception {
+    public PatientHistory updateOrCreateNote(String firstName, String lastName, Note noteUpdated) throws Exception {
         Optional<PatientHistory> patientsHistory = patientsHistoryRepository.findByFirstNameAndLastName(firstName, lastName);
-        for (Notes notes : patientsHistory.get().getNotes()) {
-            if (notes.getCreationDate().equals(noteUpdated.getCreationDate())) {
-                notes.setNote(noteUpdated.getNote());
+        for (Note note : patientsHistory.get().getNotes()) {
+            if (note.getCreationDate().equals(noteUpdated.getCreationDate())) {
+                String newLine = System.getProperty("line.separator");
+                note.setContent(note.getContent() + newLine + noteUpdated.getContent());
                 return patientsHistoryRepository.save(patientsHistory.get());
             }
         }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface PatientHistoryRepository extends MongoRepository<PatientHistory, String> {
+public interface PatientHistoryRepository extends MongoRepository<PatientHistory, Long> {
 
     Optional<PatientHistory> findByFirstNameAndLastName(String firstName, String lastName);
     Optional<PatientHistory> findByPatientId(Long patientId);

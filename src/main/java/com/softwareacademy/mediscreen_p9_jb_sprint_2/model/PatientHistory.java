@@ -26,7 +26,7 @@ public class PatientHistory {
     @NotBlank
     private String lastName;
 
-    private List<Notes> notes;
+    private List<Note> notes;
 
 
 }

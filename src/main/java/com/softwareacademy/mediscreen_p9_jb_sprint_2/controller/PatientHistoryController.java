@@ -1,6 +1,6 @@
 package com.softwareacademy.mediscreen_p9_jb_sprint_2.controller;
 
-import com.softwareacademy.mediscreen_p9_jb_sprint_2.model.Notes;
+import com.softwareacademy.mediscreen_p9_jb_sprint_2.model.Note;
 import com.softwareacademy.mediscreen_p9_jb_sprint_2.model.PatientHistory;
 import com.softwareacademy.mediscreen_p9_jb_sprint_2.service.PatientHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +50,9 @@ public class PatientHistoryController {
     }
 
     @PutMapping("/patientHistory")
-    public ResponseEntity<Object> updateOrAddNote(@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName, @RequestBody Notes notes) throws Exception {
+    public ResponseEntity<Object> updateOrAddNote(@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName, @RequestBody Note note) throws Exception {
         try {
-            PatientHistory createdNotes = patientHistoryService.updateOrCreateNote(firstName, lastName, notes);
+            PatientHistory createdNotes = patientHistoryService.updateOrCreateNote(firstName, lastName, note);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdNotes);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
