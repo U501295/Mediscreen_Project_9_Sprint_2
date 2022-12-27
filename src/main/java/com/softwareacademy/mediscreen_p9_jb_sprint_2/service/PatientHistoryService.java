@@ -20,8 +20,8 @@ public class PatientHistoryService {
     PatientHistoryRepository patientsHistoryRepository;
 
     public PatientHistory createPatientsHistory(PatientHistory patientHistory) throws AlreadyExistsException {
-        if (patientsHistoryRepository.findByFirstNameAndLastName(patientHistory.getFirstName(), patientHistory.getLastName()).isPresent()) {
-            throw new AlreadyExistsException(patientHistory.getFirstName() + " " + patientHistory.getLastName() + " " + "already Exists");
+        if (patientsHistoryRepository.findByPatientId(patientHistory.getPatientId()).isPresent()) {
+            throw new AlreadyExistsException("id " + patientHistory.getPatientId() + patientHistory.getLastName() + " " + "already Exists");
         }
         Note noteToBeAdded = new Note(patientHistory.getNotes().get(0).getContent());
         List<Note> listOfNotesToBeAdded = new ArrayList<>();
@@ -30,10 +30,10 @@ public class PatientHistoryService {
         return patientsHistoryRepository.insert(historyToBeAdded);
     }
 
-    public PatientHistory getPatientsHistory(String firstName, String lastName) throws DoesNotExistsException {
-        Optional<PatientHistory> patientHistory = patientsHistoryRepository.findByFirstNameAndLastName(firstName, lastName);
+    public PatientHistory getPatientsHistory(long id) throws DoesNotExistsException {
+        Optional<PatientHistory> patientHistory = patientsHistoryRepository.findByPatientId(id);
         if (! patientHistory.isPresent()) {
-            throw new DoesNotExistsException(firstName + " " + lastName + " does not exists");
+            throw new DoesNotExistsException("id" + id + " " + " does not exist");
         }
         return patientHistory.get();
     }
@@ -41,7 +41,7 @@ public class PatientHistoryService {
     public PatientHistory getPatientsHistoryById(Long id) throws DoesNotExistsException {
         Optional<PatientHistory> patientHistory = patientsHistoryRepository.findByPatientId(id);
         if (! patientHistory.isPresent()) {
-            throw new DoesNotExistsException("Patient with id of " + id + "does not exists");
+            throw new DoesNotExistsException("History of patient with id of " + id + "does not exists");
         }
         return patientHistory.get();
     }
@@ -51,8 +51,8 @@ public class PatientHistoryService {
         return getAll;
     }
 
-    public Note getNotesByCreationDate(String firstName, String lastName, LocalDate creationDate) throws Exception {
-        Optional<PatientHistory> patientsHistory = patientsHistoryRepository.findByFirstNameAndLastName(firstName, lastName);
+    public Note getNotesByCreationDate(long id, LocalDate creationDate) {
+        Optional<PatientHistory> patientsHistory = patientsHistoryRepository.findByPatientId(id);
         for (Note note : patientsHistory.get().getNotes()) {
             if (note.getCreationDate().equals(creationDate)) {
                 return note;
@@ -61,12 +61,12 @@ public class PatientHistoryService {
         return null;
     }
 
-    public PatientHistory updateOrCreateNote(String firstName, String lastName, Note noteUpdated) throws Exception {
-        Optional<PatientHistory> patientsHistory = patientsHistoryRepository.findByFirstNameAndLastName(firstName, lastName);
+    public PatientHistory updateOrCreateNote(long id, Note noteUpdated){
+        Optional<PatientHistory> patientsHistory = patientsHistoryRepository.findByPatientId(id);
         for (Note note : patientsHistory.get().getNotes()) {
             if (note.getCreationDate().equals(noteUpdated.getCreationDate())) {
                 String newLine = System.getProperty("line.separator");
-                note.setContent(note.getContent() + newLine + noteUpdated.getContent());
+                note.setContent(note.getContent()+ newLine + "-->"+ noteUpdated.getContent());
                 return patientsHistoryRepository.save(patientsHistory.get());
             }
         }
