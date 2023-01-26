@@ -24,7 +24,7 @@ public class PatientHistoryController {
     }
 
     @GetMapping("/patientHistory")
-    public PatientHistory getPatientsHistoryByFirstAndLastName(long id) throws Exception {
+    public PatientHistory getPatientsHistoryByFirstAndLastName(Long id) throws Exception {
         PatientHistory patientHistory = patientHistoryService.getPatientsHistoryById(id);
         return patientHistory;
     }
@@ -52,13 +52,13 @@ public class PatientHistoryController {
     }
 
     @GetMapping("/noteDate/{id}/{creationDate}")
-    public Note getNoteByCreationDate(@PathVariable("id") long patientId,@PathVariable("creationDate") @DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate creationDate) {
+    public Note getNoteByCreationDate(@PathVariable("id") Long patientId,@PathVariable("creationDate") @DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate creationDate) {
         Note note = patientHistoryService.getNotesByCreationDate(patientId, creationDate);
         return note;
     }
 
     @PutMapping("/patientHistory")
-    public ResponseEntity<Object> updateOrAddNote(@RequestParam("id") long id, @RequestBody Note note){
+    public ResponseEntity<Object> updateOrAddNote(@RequestParam("id") Long id, @RequestBody Note note){
         try {
             PatientHistory createdNotes = patientHistoryService.updateOrCreateNote(id, note);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdNotes);

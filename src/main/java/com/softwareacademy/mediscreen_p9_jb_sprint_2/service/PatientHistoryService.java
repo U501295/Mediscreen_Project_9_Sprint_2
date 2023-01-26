@@ -30,7 +30,7 @@ public class PatientHistoryService {
         return patientsHistoryRepository.insert(historyToBeAdded);
     }
 
-    public PatientHistory getPatientsHistory(long id) throws DoesNotExistsException {
+    public PatientHistory getPatientsHistory(Long id) throws DoesNotExistsException {
         Optional<PatientHistory> patientHistory = patientsHistoryRepository.findByPatientId(id);
         if (! patientHistory.isPresent()) {
             throw new DoesNotExistsException("id" + id + " " + " does not exist");
@@ -51,7 +51,7 @@ public class PatientHistoryService {
         return getAll;
     }
 
-    public Note getNotesByCreationDate(long id, LocalDate creationDate) {
+    public Note getNotesByCreationDate(Long id, LocalDate creationDate) {
         Optional<PatientHistory> patientsHistory = patientsHistoryRepository.findByPatientId(id);
         for (Note note : patientsHistory.get().getNotes()) {
             if (note.getCreationDate().equals(creationDate)) {
@@ -61,7 +61,7 @@ public class PatientHistoryService {
         return null;
     }
 
-    public PatientHistory updateOrCreateNote(long id, Note noteUpdated){
+    public PatientHistory updateOrCreateNote(Long id, Note noteUpdated) throws DoesNotExistsException{
         Optional<PatientHistory> patientsHistory = patientsHistoryRepository.findByPatientId(id);
         for (Note note : patientsHistory.get().getNotes()) {
             if (note.getCreationDate().equals(noteUpdated.getCreationDate())) {
